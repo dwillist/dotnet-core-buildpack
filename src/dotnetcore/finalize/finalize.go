@@ -98,6 +98,44 @@ func Run(f *Finalizer) error {
 		return err
 	}
 
+	fmt.Fprintf(os.Stdout, "OUPTUT ON STDOUT")
+	fmt.Fprintf(os.Stderr, "OUPTUT ON STDERR")
+	f.Log.Warning("LOGGER WARNING")
+	f.Log.Error("LOGGER ERROR")
+
+	// get some size information about /home/vcap/
+	appDirCmd := exec.Command("df", "-h", f.Stager.BuildDir())
+	out, err := appDirCmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("df on appDir failed %s", err)
+	}
+	f.Log.Warning("APP DIR DISK INFO")
+	f.Log.Warning(string(out))
+
+	appDirCmddu := exec.Command("du", "-hs", f.Stager.BuildDir())
+	out, err = appDirCmddu.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("df on appDir failed %s", err)
+	}
+	f.Log.Warning("APP DIR DISK INFO DU")
+	f.Log.Warning(string(out))
+
+	depDirCmd := exec.Command("df", "-h", f.Stager.DepDir())
+	out, err = depDirCmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("df on depDir failed %s", err)
+	}
+	f.Log.Warning("DEP DIR DISK INFO")
+	f.Log.Warning(string(out))
+
+	depDirCmddu := exec.Command("du", "-hs", f.Stager.DepDir())
+	out, err = depDirCmddu.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("df on depDir failed %s", err)
+	}
+	f.Log.Warning("DEP DIR DISK INFO DU")
+	f.Log.Warning(string(out))
+
 	data, err := f.GenerateReleaseYaml()
 	if err != nil {
 		f.Log.Error("Error generating release YAML: %s", err)
